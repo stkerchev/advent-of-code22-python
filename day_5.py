@@ -4,11 +4,11 @@ import input
 # https://adventofcode.com/2022/day/5
 def resolve_supply_stacks():
     input_data = input.parse_day(5)
-    print(f'day 5 - part 1 ==> {move_crates(parce_commands(input_data), parce_stacks(input_data))}')  # TGWSMRBPN
-    print(f'day 5 - part 2 ==> {move_crates_9001(parce_commands(input_data), parce_stacks(input_data))}')  # TZLTLWRNF
+    print(f'day 5 - part 1 ==> {move_crates(build_commands(input_data), build_stacks(input_data))}')  # TGWSMRBPN
+    print(f'day 5 - part 2 ==> {move_crates_9001(build_commands(input_data), build_stacks(input_data))}')  # TZLTLWRNF
 
 
-def parce_stacks(input_data):
+def build_stacks(input_data):
     stacks_data = []
     for line in input_data:
         if line == "":
@@ -25,21 +25,19 @@ def parce_stacks(input_data):
                 stacks.append([])
             current = stacks[column_number]
             # 1->1 2->5 3->9 4->13
-            parsed_item = column_number * 4 - 3
-            if len(row) >= parsed_item:
-                item = row[parsed_item]
+            index_of_parsed_item = column_number * 4 - 3
+            if len(row) >= index_of_parsed_item:
+                item = row[index_of_parsed_item]
                 if item != ' ':
                     current.append(item)
     return stacks
 
 
-def parce_commands(input_data):
-    commands = []
+def build_commands(input_data):
     for line in input_data:
         if line != "" and line.startswith('m'):
-            c = line.split(" ")
-            commands.append([int(c[1]), int(c[3]), int(c[5])])
-    return commands
+            raw_command = line.split(" ")
+            yield [int(raw_command[n]) for n in [1, 3, 5]]
 
 
 def move_crates(commands, stacks):

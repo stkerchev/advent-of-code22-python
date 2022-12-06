@@ -11,4 +11,4 @@ if __name__ == '__main__':
     day_3.resolve_rucksack_reorganization()
     day_4.resolve_camp_cleanup()
     day_5.resolve_supply_stacks()
-    day_6.resolve()
+    day_6.resolve_tuning_trouble()

@@ -2,85 +2,38 @@ import input
 
 
 def resolve_rope_bridge():
-    input_data = input.parse_day(9)
-    print(f'day 9 - part 1 ==> {count_tail_positions(input_data)}')
-    #print(f'day 9 - part 2 ==> {input_data}')
+    head = (0, 0)
+    tail = [(0, 0) for _ in range(9)]
+    change_vertical = {'L': 0, 'U': -1, 'R': 0, 'D': 1}
+    change_horizontal = {'L': -1, 'U': 0, 'R': 1, 'D': 0}
+    tail_position_set = {tail[0]}
+    tail_position_set_long = {tail[8]}
+
+    lines = input.parse_day(9)
+    for line in lines:
+        direction, step = line.split()
+        for _ in range(int(step)):
+            head = (head[0] + change_vertical[direction], head[1] + change_horizontal[direction])
+            tail[0] = move(head, tail[0])
+            for i in range(1, 9):
+                tail[i] = move(tail[i - 1], tail[i])
+            tail_position_set.add(tail[0])
+            tail_position_set_long.add(tail[8])
+
+    print(f'day 9 - part 1 ==> {len(tail_position_set)}')
+    print(f'day 9 - part 2 ==> {len(tail_position_set_long)}')
 
 
-def count_tail_positions(input_data):
-    H=(0,0)
-    T=(0,0)
+def move(head, tail):
+    ver = (head[0] - tail[0])
+    hor = (head[1] - tail[1])
+    if abs(ver) <= 1 and abs(hor) <= 1:
+        return tail
 
-    array_size = 10
-
-    row = ["."] * array_size
-    area = [row.copy() for _ in range(array_size)]
-
-    row_2 = ["."] * array_size
-    area_2 = [row_2.copy() for _ in range(array_size)]
-    area_2[array_size-3][3] = "#"
-
-    t = [array_size-3, 3]
-    h = [array_size-3, 3]
-    for line in input_data:
-        direction, steps = line.split(" ")[0], int(line.split(" ")[1])
-        for number_of_move in range(steps):
-            move_head(area, h, direction)
-            move_tail(area, t, area_2)
-
-    res = 0
-    for x in range(len(area_2)):
-        for y in range(len(area_2[0])):
-            if area_2[x][y] == "#":
-                res += 1
-    print_area(area)
-    print_area(area_2)
-    return res
-
-
-def move_head(area, h, direction):
-    if direction == "R":
-        h[1] = h[1] + 1
-        area[h[0]][h[1]] = "H"
-    if direction == "L":
-        h[1] = h[1] - 1
-        area[h[0]][h[1]] = "H"
-    if direction == "U":
-        h[0] = h[0] - 1
-        area[h[0]][h[1]] = "H"
-    if direction == "D":
-        h[0] = h[0] + 1
-        area[h[0]][h[1]] = "H"
-
-
-def move_tail(area, t, area_2):
-    if area[t[0]][t[1] + 2] == "H":  # right
-        t[1] = t[1] + 1
-    if area[t[0]][t[1] - 2] == "H":  # left
-        t[1] = t[1] - 1
-    if area[t[0] - 2][t[1]] == "H":  # down
-        t[0] = t[0] - 1
-    if area[t[0] + 2][t[1]] == "H":  # up
-        t[0] = t[0] + 1
-
-    if area[t[0] - 2][t[1] + 1] == "H" or area[t[0] - 1][t[1] + 2] == "H":  # right-up
-        t[0] = t[0] - 1
-        t[1] = t[1] + 1
-    if area[t[0] - 2][t[1] - 1] == "H" or area[t[0] - 1][t[1] - 2] == "H":  # left-up
-        t[0] = t[0] - 1
-        t[1] = t[1] - 1
-    if area[t[0] + 2][t[1] - 1] == "H" or area[t[0] + 1][t[1] - 2] == "H":  # left-down
-        t[0] = t[0] + 1
-        t[1] = t[1] - 1
-    if area[t[0] + 2][t[1] + 1] == "H" or area[t[0] + 1][t[1] + 2] == "H":  # right-down
-        t[0] = t[0] + 1
-        t[1] = t[1] + 1
-
-    area_2[t[0]][t[1]] = "#"
-    # print_area(area_2)
-
-
-def print_area(area):
-    for line in area:
-        print(line)
-    print("--------------------------------------------------")
+    if abs(ver) >= 2 and abs(hor) >= 2:
+        tail = (head[0] - 1 if tail[0] < head[0] else head[0] + 1, head[1] - 1 if tail[1] < head[1] else head[1] + 1)
+    elif abs(ver) >= 2:
+        tail = (head[0] - 1 if tail[0] < head[0] else head[0] + 1, head[1])
+    elif abs(hor) >= 2:
+        tail = (head[0], head[1] - 1 if tail[1] < head[1] else head[1] + 1)
+    return tail

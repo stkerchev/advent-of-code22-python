@@ -1,5 +1,6 @@
 import day_1
 import day_10
+import day_11
 import day_2
 import day_3
 import day_4
@@ -20,3 +21,4 @@ if __name__ == '__main__':
     day_8.resolve_treetop_tree_house()
     day_9.resolve_rope_bridge()
     day_10.resolve_cathode_ray_tube()
+    day_11.resolve_monkey_in_the_middle()
